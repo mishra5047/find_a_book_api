@@ -1,0 +1,16 @@
+{
+  "name": "find_a_book_api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dbQuery.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start" : "node app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
