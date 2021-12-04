@@ -6,40 +6,45 @@ const db = await open({
     driver: sqlite3.Database
   })
 
-function getAllBooksDetails(){
-    var result = db.all('SELECT * FROM BookDB')
-    result.then( (data) => {
-        return data
-    })
+async function getAllBooksDetails(){
+    var result = await db.all('SELECT * FROM BookDB')
+    return result
 }
 
-function getBookByBookName(bookName){
-    db.get('SELECT * FROM BookDB WHERE BookName = ?', [bookName]).then((res) => {
+async function getBookByBookName(bookName){
+
+    let bookReviewList = await getBooksReviews(bookName)
+    //console.log(bookReviewList);
+    let averageStar = await returnAverageReview(bookReviewList)
+    let allReviews = await getBooksReviews(bookName)
+
+    let result = await db.get('SELECT * FROM BookDB WHERE BookName = ?', [bookName])
+    result["averageStar"] = averageStar
+    result["allReviews"] = allReviews
        
-       res["averageStar"] = returnAverageReview(getBooksReviews(bookName))
-       res["allReviews"] = getBooksReviews(bookName)
-        return res
-    })
+    return result
 }
 
-function returnAverageReview(reviewList){
-
+async function returnAverageReview(reviewList){
+    
     let result = 0
-
-    for(item in reviewList){
-        result += reviewList["ReviewStar"]
+    
+    for(let i = 0 ; i < reviewList.length; i++){
+        let number = reviewList[i]["ReviewStar"]
+        result += number
     }
 
-    result = result / reviewList.length()
+    result = result / reviewList.length
+
+    return result + ""
 }
 
-function getBooksReviews(bookName){
-    db.get('SELECT * FROM BookReviews WHERE BookName = ?', [bookName]).then((data) => {
-        return data
-    })
+async function getBooksReviews(bookName){
+    let res = await db.all('SELECT * FROM BookReviews WHERE BookName = ?', [bookName])
+    return res
 }
 
-function addReviewForBook(bookName, reviewObject){
+async function addReviewForBook(bookName, reviewObject){
     
     db.run('INSERT INTO BookReviews (BookName) VALUES (?)',bookName)
     db.run('UPDATE BookReviews SET ReviewAddedBy = ? WHERE BookName = ?',reviewObject["ReviewAddedBy"],bookName)
