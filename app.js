@@ -46,6 +46,8 @@ app.post('/addReviewForBook', async function (req, res) {
     res.send(result)
 })
 
-app.listen(3001 , () => {
-    console.log("Express app running at 3001");
+var port = process.env.PORT || 3000
+
+app.listen(port , () => {
+    console.log("Express app running at " + port);
 })
