@@ -1,9 +1,13 @@
 import express from 'express'
 const app = express()
+import cors from 'cors'
 
 import {getAllBooksDetails} from './dbQuery.js'
 import {getBookByBookName} from './dbQuery.js'
 import {addReviewForBook} from './dbQuery.js'
+
+//cors needed to make calls
+app.use(cors());
 
 app.get('/', function (req, res){
     res.send("hi")
