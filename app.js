@@ -5,6 +5,10 @@ import {getAllBooksDetails} from './dbQuery.js'
 import {getBookByBookName} from './dbQuery.js'
 import {addReviewForBook} from './dbQuery.js'
 
+app.get('/', function (req, res){
+    res.send("hi")
+})
+
 app.get('/allBooks', async function (req, res) {
 
     let result = await getAllBooksDetails()
