@@ -1,5 +1,6 @@
 import sqlite3 from 'sqlite3'
 import {open} from 'sqlite'
+import Database from 'better-sqlite3';
 
 const db = await open({
     filename: 'database.sqlite',
@@ -26,7 +27,9 @@ async function getBookByBookName(bookName){
 }
 
 async function returnAverageReview(reviewList){
-    
+    if(reviewList == undefined || reviewList == null){
+        return -1;
+    }
     let result = 0
     
     for(let i = 0 ; i < reviewList.length; i++){
@@ -44,16 +47,19 @@ async function getBooksReviews(bookName){
     return res
 }
 
-async function addReviewForBook(bookName, reviewObject){
-    
-    db.run('INSERT INTO BookReviews (BookName) VALUES (?)',bookName)
-    db.run('UPDATE BookReviews SET ReviewAddedBy = ? WHERE BookName = ?',reviewObject["ReviewAddedBy"],bookName)
-    db.run('UPDATE BookReviews SET ReviewText = ? WHERE BookName = ?',reviewObject["ReviewText"],bookName)
-    db.run('UPDATE BookReviews SET ReviewStar = ? WHERE BookName = ?',reviewObject["ReviewStar"],bookName).then((res) => {
-        return "Review added sucessfully"
-    }).catch( (err) => {
-        return err + ""
-    })
+async function addReviewForBook(bookName, addedBy, reviewText, reviewStar){
+    if(bookName == null){
+        console.log("null found");
+        return;
+    }
+    const dbInsert = new Database('database.sqlite', { verbose: console.log });
+
+    let insertQuery = await dbInsert.prepare("INSERT INTO BookReviews(BookName, ReviewAddedBy, ReviewText, ReviewStar) VALUES (?,?,?,?)")
+    await insertQuery.run(bookName, addedBy, reviewText, reviewStar)
 }
 
+async function addReview(bookName, addedBy, reviewText, reviewStar){
+    await addReviewForBook(bookName, addedBy, reviewText, reviewStar)
+}
+//await addReview("IT", "Hi", "test", 5)
 export {getAllBooksDetails, getBookByBookName, addReviewForBook};

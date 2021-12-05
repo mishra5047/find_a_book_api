@@ -28,16 +28,17 @@ app.get('/bookByName', async function (req, res) {
 
 app.post('/addReviewForBook', async function (req, res) {
 
-    let bookName = req["bookName"]
-    let reviewObject = req["reviewObject"]
+    let bookName = req.query["bookName"]
+    let reviewAddedBy = req.query["addedBy"]
+    let reviewText = req.query["reviewText"]
+    let reviewStar = req.query["reviewStar"]
 
-    if(bookName == null || bookName == "" || reviewObject == null || reviewObject == ""){
+    if(bookName == null || bookName == "" || reviewAddedBy == null || reviewAddedBy == ""
+    || reviewText == null || reviewText == undefined || reviewStar == null || reviewStar == undefined){
         res.send("BookName or review object can't be null or empty")
         return
     }
-
-    let result = await addReviewForBook(bookName, reviewObject)
-    console.log(result);
+    let result = await addReviewForBook(bookName, reviewAddedBy, reviewText, reviewStar)
     res.send(result)
 })
 
